@@ -6,6 +6,7 @@ import com.furkandemiryurek.jwt_self_work.enums.ErrorType;
 import com.furkandemiryurek.jwt_self_work.exception.CustomException;
 import com.furkandemiryurek.jwt_self_work.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 
@@ -13,18 +14,20 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UserDto save(UserDto userDto) {
         User user = User.builder().
                 username(userDto.getUsername())
-                .password(userDto.getPassword())
+                .password(passwordEncoder.encode(userDto.getPassword()))
                 .build();
 
         try {
             user = userRepository.save(user);
             return UserDto.builder()
                     .username(user.getUsername())
-                    .password(user.getPassword()).build();
+                    .password(user.getPassword())
+                    .build();
         }catch (Exception e) {
             System.out.printf(e.getMessage());
             throw new CustomException(ErrorType.UNEXPECTED_ERROR);
@@ -35,6 +38,7 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
         return UserDto.builder()
+                .id(user.getId())
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .build();

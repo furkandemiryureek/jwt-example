@@ -1,6 +1,7 @@
 package com.furkandemiryurek.jwt_self_work.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,7 +22,9 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Size(max = 100)
     private String username;
+    @Size(max = 100)
     private String password;
 
     @Override
